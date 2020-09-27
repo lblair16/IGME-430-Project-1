@@ -7,8 +7,8 @@ const puzzleHandler = require('./puzzles.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-//added route to get for our ES5 JS bundle. 
-//This bundle will be created by our babel 
+// added route to get for our ES5 JS bundle.
+// This bundle will be created by our babel
 // watch/build scripts in package.json
 const urlStruct = {
   '/': htmlHandler.getIndex,
@@ -59,11 +59,10 @@ const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
   const { method } = request;
-  //single post method, so if it's that then handle it
-  if(method === 'POST'){
+  // single post method, so if it's that then handle it
+  if (method === 'POST') {
     handlePost(request, response);
-  }
-  else if (urlStruct[parsedUrl.pathname]) {
+  } else if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response, params);
   } else {
     urlStruct.notFound(request, response);
