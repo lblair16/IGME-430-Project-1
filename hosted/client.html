@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Project-1 Need A Name</title>
+  <title>Paint Me This</title>
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -26,27 +26,76 @@
       <div class="col">
         <div class="input-group">
           <select class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
-            <option selected>Choose...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            <option selected value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
           <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button">Button</button>
           </div>
         </div>
-        <div class="col">
-          col with puzzle
-        </div>
-      </div>
-      <div class="row">
-        <div class="center">
-          <table id='puzzle'>
-
-          </table>
-        </div>
       </div>
     </div>
+    <div class="row">
+      <div class="solution col">
+        <table id='solution'>
+          <th>
+            <tr>
+              <td colspan="3" class="text-white bg-dark center-text">Paint Me</td>
+            </tr>
+          </th>
+          <tr id='s1'>
+            <td id='s11'></td>
+            <td id='s12'></td>
+            <td id='s13'></td>
+          </tr>
+          <tr id='s2'>
+            <td id='s21'></td>
+            <td id='s22'></td>
+            <td id='s23'></td>
+          </tr>
+          <tr id='s3'>
+            <td id='s31'></td>
+            <td id='s32'></td>
+            <td id='s33'></td>
+          </tr>
+        </table>
+      </div>
+      <div class="center col">
+        <table style="width: 150px; height: 150px;">
+          <th>
+            <tr class="text-white bg-dark center-text">
+              <td>Extra</td>
+              <td>Active</td>
+            </tr>
+          </th>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+        <table id='puzzle'>
+          <tr id='p1'>
+            <td id='p11'></td>
+            <td id='p12'></td>
+            <td id='p13'></td>
+          </tr>
+          <tr id='p2'>
+            <td id='p21'></td>
+            <td id='p22'></td>
+            <td id='p23'></td>
+          </tr>
+          <tr id='p3'>
+            <td id='p31'></td>
+            <td id='p32'></td>
+            <td id='p33'></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
