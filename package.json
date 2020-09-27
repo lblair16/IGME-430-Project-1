@@ -1,0 +1,33 @@
+{
+  "name": "igme-430-project-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\"",
+    "nodemon": "nodemon -e js,css,html --watch ./src  --watch ./hosted ./src/server.js",
+    "build": "babel ./client --out-file ./hosted/DONT_EDIT_bundle.js",
+    "watch": "babel --watch ./client --out-file ./hosted/DONT_EDIT_bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblair16/IGME-430-Project-1.git"
+  },
+  "author": "Lucas Blair",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lblair16/IGME-430-Project-1/issues"
+  },
+  "homepage": "https://github.com/lblair16/IGME-430-Project-1#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "nodemon": "^2.0.4"
+  }
+}
