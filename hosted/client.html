@@ -15,6 +15,10 @@
   <script src="bundle.js"> </script>
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/client.css">
+  <!-- Lodash for object comparison -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"
+    integrity="sha512-90vH1Z83AJY9DmlWa8WkjkV79yfS2n2Oxhsi2dZbIv0nC4E6m5AbH8Nh156kkM7JePmqD6tcZsfad1ueoaovww=="
+    crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -24,8 +28,11 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <div class="input-group">
-          <select class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+        <div class="input-group level-select">
+          <div class="input-group-prepend">
+            <label class="input-group-text bg-dark text-white" for="levelSelect">Level</label>
+          </div>
+          <select class="custom-select" id="levelSelect" aria-label="Example select with button addon">
             <option selected value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -33,19 +40,15 @@
             <option value="5">5</option>
           </select>
           <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button">Button</button>
+            <button class="btn btn-dark" type="button" id='levelButton'>Load/Reset</button>
           </div>
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="solution col">
+      <div class="solution col-6">
+        <div class="text-white bg-dark center-text">Paint Me</div>
         <table id='solution'>
-          <th>
-            <tr>
-              <td colspan="3" class="text-white bg-dark center-text">Paint Me</td>
-            </tr>
-          </th>
           <tr id='s1'>
             <td id='s11'></td>
             <td id='s12'></td>
@@ -63,17 +66,17 @@
           </tr>
         </table>
       </div>
-      <div class="center col">
-        <table style="width: 150px; height: 150px;">
+      <div class="center col-6">
+        <table style="height: 150px;">
           <th>
             <tr class="text-white bg-dark center-text">
               <td>Extra</td>
-              <td>Active</td>
+              <td>Paint Color</td>
             </tr>
           </th>
           <tr>
-            <td></td>
-            <td></td>
+            <td id="extra"></td>
+            <td id="active"></td>
           </tr>
         </table>
         <table id='puzzle'>
@@ -94,9 +97,34 @@
           </tr>
         </table>
       </div>
+      <div class="modal fade" id="finishedModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Level Finished!</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row" id="scoreForModal"></div>
+              <div class="row">
+                <div class="input-group level-select">
+                  <input type="text" class="form-control" id='playerName' placeholder="Recipient's username"
+                    aria-label="Your Name">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id='submitButton'>Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"

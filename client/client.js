@@ -2,10 +2,21 @@
     Our babel build/watch scripts in the package.json
     will convert this into ES5 and put it into the hosted folder.
 **/
+/**TODO
+ * Add Scores To UI, display on right side of screen
+ * Add Cheatsheet/rules to leftside of screen
+ * fix layout of elements, it's kind of janky right now
+ * Add bootstrap alerts/toasts when score is submitted/updated successfully
+ * Stretch Goal, save the puzzles in a json file instead, write to that file
+ * to save data between refreshes
+ */
 
 let paintColor;
-let currPuzzleState;
+let puzzleStart;
+let puzzleState;
 let puzzleSolution;
+let currLevel = 1;
+let currScore = 0;
 
 //load the data for the current puzzle
 const loadPuzzle = (level) => {
@@ -16,38 +27,49 @@ const loadPuzzle = (level) => {
       "Accept": 'application/json'
     }
   }).then((response) => {
-    if(response.status === 200){
+    if (response.status === 200) {
       response.json().then((data) => {
         setPuzzle(data);
       })
     }
-    else{
+    else {
       response.json().then((data) => {
         alert(`Error Message: ${data.message}. Error Code: ${data.id}`)
       })
     }
-    console.log(response);
   }).catch((e) => {
     console.log("An error occured", e);
   })
 }
 
+//set the current puzzle
 const setPuzzle = (puzzle) => {
-  console.log(puzzle);
+  puzzleStart = puzzle.start;
+  puzzleState = puzzle.start;
+  puzzleSolution = puzzle.end;
   //loop through each cell for the solution and puzzle and set the correct class name
-  for(let i = 1; i < 4; i++){
+  for (let i = 1; i < 4; i++) {
     let col = 1;
-    console.log(puzzle.start);
-    for(let cell of puzzle.start[i]){
+    for (let cell of puzzle.start[i]) {
       document.querySelector(`#p${i}${col}`).className = cell;
       col++;
     }
     col = 1;
-    for(let cell of puzzle.end[i]){
+    for (let cell of puzzle.end[i]) {
       document.querySelector(`#s${i}${col}`).className = cell;
       col++;
     }
   }
+  //set the class for the extra cell and set the paint color to it
+  document.querySelector('#extra').className = puzzle.extra;
+  setPaintColor(puzzle.extra);
+
+}
+
+//set the active paint color and update UI to match
+const setPaintColor = (color) => {
+  paintColor = color;
+  document.querySelector('#active').className = color;
 }
 
 const colorCombinations = {
@@ -123,13 +145,56 @@ const handleCellChange = (cellId) => {
   const cell = document.querySelector(`#${cellId}`);
   const cellColor = cell.className;
   cell.className = colorCombinations[paintColor + cellColor] ? colorCombinations[paintColor + cellColor] : cell.className;
+  //update puzzle state with new color
+  const splitId = cellId.split("");
+  puzzleState[splitId[1]][Number(splitId[2]) - 1] = cell.className;
+  currScore++;
+  //compare with solution to see if we finished the puzzle
+  if (_.isEqual(puzzleState, puzzleSolution)) {
+    //set the score in the modal and then reset it
+    document.querySelector('#scoreForModal').innerHTML = `Score: ${currScore}`;
+    //launch a modal for the user to sumbit their score
+    $('#finishedModal').modal('show');
+  }
 }
 
 //set the paint color currently in use
 const handlePaintColorChange = (e, cellId) => {
   e.preventDefault();
   const cell = document.querySelector(`#${cellId}`);
-  paintColor = cell.className;
+  setPaintColor(cell.className);
+}
+
+//send post request to create/update score entry for this level
+const submitScore = (e) => {
+  //create the body for post request
+  const jsonBody = {
+    level: currLevel,
+    score: currScore,
+    name: document.querySelector('#playerName').value
+  }
+
+  fetch('/updatePuzzle', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(jsonBody),
+  }).then((response) => {
+    if (response.status === 201) {
+      response.json().then(data => {
+        console.log('Success:', data);
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
+    }
+    else if (response.status === 204) {
+      console.log('Score updated');
+    }
+  }).catch((error) => {
+    console.error('Error:', error);
+  });
 }
 
 const init = () => {
@@ -140,9 +205,15 @@ const init = () => {
       cell.addEventListener('click', () => handleCellChange(cell.id));
       cell.addEventListener('contextmenu', (e) => handlePaintColorChange(e, cell.id));
     }
+    else if (cell.id === 'extra') {
+      cell.addEventListener('contextmenu', (e) => handlePaintColorChange(e, cell.id));
+    }
   }
+  document.querySelector("#levelButton").addEventListener('click', (e) => loadPuzzle(currLevel));
+  document.querySelector('#levelSelect').addEventListener('change', (e) => currLevel = e.target.value);
+  document.querySelector('#submitButton').addEventListener('click', (e) => submitScore());
   //load the first puzzle
-  loadPuzzle(1);
+  loadPuzzle(currLevel);
 
 };
 

@@ -33,7 +33,7 @@ const puzzles = {
   },
   3: {
     start: {
-      1: ['white', 'cyan', 'green'],
+      1: ['white', 'cyan', 'white'],
       2: ['white', 'magenta', 'white'],
       3: ['white', 'white', 'white'],
     },
@@ -121,7 +121,6 @@ const getPuzzles = (request, response, params) => {
 
 // update the puzzle to be completed and add the user score for that puzzle
 const updatePuzzle = (request, response, body) => {
-  console.log(body.level);
   if (body.level && body.score && body.name) {
     if (puzzles[body.level]) {
       puzzles[body.level].completed = true;
