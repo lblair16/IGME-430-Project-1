@@ -17,18 +17,31 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 /**TODO
  * Add Scores To UI, display on right side of screen
- * Add Cheatsheet/rules to leftside of screen
+ * Add rules/how to play 
  * fix layout of elements, it's kind of janky right now
  * Add bootstrap alerts/toasts when score is submitted/updated successfully
- * Stretch Goal, save the puzzles in a json file instead, write to that file
- * to save data between refreshes
  */
 var paintColor;
 var puzzleStart;
 var puzzleState;
 var puzzleSolution;
 var currLevel = 1;
-var currScore = 0; //load the data for the current puzzle
+var currScore = 0;
+var learnedRules;
+var localStorage; //from https://stackoverflow.com/questions/16427636/check-if-localstorage-is-available
+
+function storageAvailable(type) {
+  try {
+    var storage = window[type],
+        x = '__storage_test__';
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return true;
+  } catch (e) {
+    return false;
+  }
+} //load the data for the current puzzle
+
 
 var loadPuzzle = function loadPuzzle(level) {
   fetch("/puzzle?level=".concat(level), {
@@ -141,7 +154,12 @@ var handleCellChange = function handleCellChange(cellId) {
 
   var splitId = cellId.split("");
   puzzleState[splitId[1]][Number(splitId[2]) - 1] = cell.className;
-  currScore++; //compare with solution to see if we finished the puzzle
+  currScore++; //check to see if the player knows this rule yet, if not add it
+
+  if (!learnedRules[paintColor + cellColor]) {
+    addLearnedRule(paintColor, cellColor, cell.className);
+  } //compare with solution to see if we finished the puzzle
+
 
   if (_.isEqual(puzzleState, puzzleSolution)) {
     //set the score in the modal and then reset it
@@ -186,6 +204,48 @@ var submitScore = function submitScore(e) {
   })["catch"](function (error) {
     console.error('Error:', error);
   });
+}; //add the learned rule and set local storage if possible
+
+
+var addLearnedRule = function addLearnedRule(paintColor, cellColor, combination) {
+  var id = paintColor + cellColor;
+  var rule = "".concat(_.startCase(paintColor), " paint + ").concat(_.startCase(cellColor), " block = ").concat(combination);
+  learnedRules[id] = rule;
+  displayLearnedRules();
+
+  if (localStorage) {
+    localStorage.setItem('learnedRules', JSON.stringify(learnedRules));
+  }
+}; //see if we can get the rules from local storage
+
+
+var setLearnedRules = function setLearnedRules() {
+  if (storageAvailable('localStorage')) {
+    learnedRules = localStorage.getItem('learnedRules') ? JSON.parse(localStorage.getItem('learnedRules')) : {};
+
+    if (learnedRules && Object.keys(learnedRules).length > 0) {
+      displayLearnedRules();
+    }
+
+    console.log(learnedRules);
+  } else {
+    console.log('Please enable local storage to experience all features');
+  }
+};
+
+var displayLearnedRules = function displayLearnedRules() {
+  //add the learned rules to the UI
+  var target = document.querySelector('#learnedRules');
+  var bigString = '';
+  var keys = Object.keys(learnedRules);
+
+  for (var _i = 0, _keys = keys; _i < _keys.length; _i++) {
+    var key = _keys[_i];
+    //class='${colorCombinations[key]}' not sure if I liked how it looked, removing for now
+    bigString += "<li >".concat(learnedRules[key], "</li>");
+  }
+
+  target.innerHTML = bigString;
 };
 
 var init = function init() {
@@ -233,6 +293,7 @@ var init = function init() {
   }); //load the first puzzle
 
   loadPuzzle(currLevel);
+  setLearnedRules();
 };
 
 window.onload = init;

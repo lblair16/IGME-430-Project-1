@@ -4,11 +4,9 @@
 **/
 /**TODO
  * Add Scores To UI, display on right side of screen
- * Add Cheatsheet/rules to leftside of screen
+ * Add rules/how to play 
  * fix layout of elements, it's kind of janky right now
  * Add bootstrap alerts/toasts when score is submitted/updated successfully
- * Stretch Goal, save the puzzles in a json file instead, write to that file
- * to save data between refreshes
  */
 
 let paintColor;
@@ -17,6 +15,22 @@ let puzzleState;
 let puzzleSolution;
 let currLevel = 1;
 let currScore = 0;
+let learnedRules;
+let localStorage;
+
+//from https://stackoverflow.com/questions/16427636/check-if-localstorage-is-available
+function storageAvailable(type) {
+  try {
+    let storage = window[type],
+      x = '__storage_test__';
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return true;
+  }
+  catch (e) {
+    return false;
+  }
+}
 
 //load the data for the current puzzle
 const loadPuzzle = (level) => {
@@ -140,6 +154,7 @@ const colorCombinations = {
   magentablue: 'white',
 }
 
+
 //change the color of the cell depending on the combination between its cell and the paint color
 const handleCellChange = (cellId) => {
   const cell = document.querySelector(`#${cellId}`);
@@ -149,6 +164,10 @@ const handleCellChange = (cellId) => {
   const splitId = cellId.split("");
   puzzleState[splitId[1]][Number(splitId[2]) - 1] = cell.className;
   currScore++;
+  //check to see if the player knows this rule yet, if not add it
+  if (!learnedRules[paintColor + cellColor]) {
+    addLearnedRule(paintColor, cellColor, cell.className);
+  }
   //compare with solution to see if we finished the puzzle
   if (_.isEqual(puzzleState, puzzleSolution)) {
     //set the score in the modal and then reset it
@@ -197,6 +216,43 @@ const submitScore = (e) => {
   });
 }
 
+//add the learned rule and set local storage if possible
+const addLearnedRule = (paintColor, cellColor, combination) => {
+  const id = paintColor + cellColor;
+  const rule = `${_.startCase(paintColor)} paint + ${_.startCase(cellColor)} block = ${combination}`
+  learnedRules[id] = rule;
+  displayLearnedRules();
+  if (localStorage) {
+    localStorage.setItem('learnedRules', JSON.stringify(learnedRules));
+  }
+}
+
+//see if we can get the rules from local storage
+const setLearnedRules = () => {
+  if (storageAvailable('localStorage')) {
+    learnedRules = localStorage.getItem('learnedRules') ? JSON.parse(localStorage.getItem('learnedRules')) : {};
+    if (learnedRules && Object.keys(learnedRules).length > 0) {
+      displayLearnedRules()
+    }
+    console.log(learnedRules);
+  }
+  else {
+    console.log('Please enable local storage to experience all features');
+  }
+}
+
+const displayLearnedRules = () => {
+  //add the learned rules to the UI
+  const target = document.querySelector('#learnedRules');
+  let bigString = ''
+  let keys = Object.keys(learnedRules);
+  for (let key of keys) {
+    //class='${colorCombinations[key]}' not sure if I liked how it looked, removing for now
+    bigString += `<li >${learnedRules[key]}</li>`
+  }
+  target.innerHTML = bigString;
+}
+
 const init = () => {
   //add event listeners
   let cells = document.querySelectorAll("td");
@@ -214,6 +270,7 @@ const init = () => {
   document.querySelector('#submitButton').addEventListener('click', (e) => submitScore());
   //load the first puzzle
   loadPuzzle(currLevel);
+  setLearnedRules();
 
 };
 

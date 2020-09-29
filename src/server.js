@@ -10,7 +10,7 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 // added route to get for our ES5 JS bundle.
 // This bundle will be created by our babel
 // watch/build scripts in package.json
-const urlStruct = {
+const urlStructGet = {
   '/': htmlHandler.getIndex,
   '/bundle.js': htmlHandler.getBundle,
   '/puzzle': puzzleHandler.getPuzzles,
@@ -18,9 +18,14 @@ const urlStruct = {
   notFound: jsonHandler.notFound,
 };
 
+const urlStructPost = {
+  '/updatePuzzle': puzzleHandler.updatePuzzle,
+  notFound: jsonHandler.notFound,
+}
+
 // handle POST request for updating the puzzle
 const handlePost = (request, response, pathName) => {
-  if (pathName === '/updatePuzzle') {
+  if (urlStructPost[pathName]) {
     const res = response;
 
     // uploads come in as a byte stream that we need
@@ -46,13 +51,11 @@ const handlePost = (request, response, pathName) => {
       // combine our byte array (using Buffer.concat)
       // and convert it to a string value (in this instance)
       const bodyString = Buffer.concat(body).toString();
-      // since we are getting x-www-form-urlencoded data
-      // the format will be the same as querystrings
-      // Parse the string into an object by field name
+      // Parse the string into an object
       const bodyParams = JSON.parse(bodyString);
 
-      // pass to our addUser function
-      puzzleHandler.updatePuzzle(request, res, bodyParams);
+      // call function to handle new data
+      urlStructPost[pathName](request, res, bodyParams);
     });
   }
 };
@@ -64,10 +67,10 @@ const onRequest = (request, response) => {
   // single post method, so if it's that then handle it
   if (method === 'POST') {
     handlePost(request, response, parsedUrl.pathname);
-  } else if (urlStruct[parsedUrl.pathname]) {
-    urlStruct[parsedUrl.pathname](request, response, params);
+  } else if (urlStructGet[parsedUrl.pathname]) {
+    urlStructGet[parsedUrl.pathname](request, response, params);
   } else {
-    urlStruct.notFound(request, response);
+    urlStructGet.notFound(request, response);
   }
 };
 

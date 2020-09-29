@@ -25,9 +25,9 @@
   <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand">Paint Me This</a>
   </nav>
-  <div class="container">
-    <div class="row">
-      <div class="col">
+  <div class="container-fluid" id="container">
+    <div class="row ">
+      <div class="col-md">
         <div class="input-group level-select">
           <div class="input-group-prepend">
             <label class="input-group-text bg-dark text-white" for="levelSelect">Level</label>
@@ -46,7 +46,12 @@
       </div>
     </div>
     <div class="row">
-      <div class="solution col-6">
+      <div class="col-md-2 bg-dark" id='learnedRulesContainer'>
+        <p class="text-white bg-dark" id='learnedRulesHead'>Learned Rules</p>
+        <ul class="bg-dark text-white" id='learnedRules'>
+        </ul>
+      </div>
+      <div class="solution col-md-5">
         <div class="text-white bg-dark center-text">Paint Me</div>
         <table id='solution'>
           <tr id='s1'>
@@ -66,7 +71,7 @@
           </tr>
         </table>
       </div>
-      <div class="center col-6">
+      <div class="col-md-5">
         <table style="height: 150px;">
           <th>
             <tr class="text-white bg-dark center-text">

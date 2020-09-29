@@ -97,6 +97,7 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
+//send back the requested puzzle or all puzzles
 const getPuzzles = (request, response, params) => {
   // get the method type
   const { method } = request;
