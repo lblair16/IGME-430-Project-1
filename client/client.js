@@ -319,11 +319,11 @@ const init = () => {
         hammerManager.get('singletap').requireFailure('doubletap');
 
         hammerManager.on("singletap", function () {
-          ev.gesture.preventDefault()
+          //ev.gesture.preventDefault();
           handleCellChange(cell.id);
         });
         hammerManager.on("doubletap", function (ev) {
-          ev.gesture.preventDefault()
+          //ev.gesture.preventDefault();
           handlePaintColorChange(ev, cell.id)
         });
       }
@@ -340,10 +340,10 @@ const init = () => {
         hammerManager.get('singletap').requireFailure('doubletap');
 
         hammerManager.on("singletap", function () {
-         return;
+          return;
         });
         hammerManager.on("doubletap", function (ev) {
-          ev.gesture.preventDefault()
+          //ev.gesture.preventDefault();
           handlePaintColorChange(ev, cell.id)
         });
       }

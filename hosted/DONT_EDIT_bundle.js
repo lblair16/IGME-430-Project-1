@@ -324,10 +324,11 @@ var init = function init() {
 
           hammerManager.get('singletap').requireFailure('doubletap');
           hammerManager.on("singletap", function () {
+            //ev.gesture.preventDefault();
             handleCellChange(cell.id);
           });
           hammerManager.on("doubletap", function (ev) {
-            ev.preventDefault();
+            //ev.gesture.preventDefault();
             handlePaintColorChange(ev, cell.id);
           });
         } else if (cell.id === 'extra') {
@@ -337,13 +338,25 @@ var init = function init() {
           _hammerManager.add(new Hammer.Tap({
             event: 'doubletap',
             taps: 2
+          })); // Single tap recognizer
+
+
+          _hammerManager.add(new Hammer.Tap({
+            event: 'singletap'
           })); // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
 
 
-          _hammerManager.get('doubletap').recognizeWith('singletap');
+          _hammerManager.get('doubletap').recognizeWith('singletap'); // we only want to trigger a tap, when we don't have detected a doubletap
+
+
+          _hammerManager.get('singletap').requireFailure('doubletap');
+
+          _hammerManager.on("singletap", function () {
+            return;
+          });
 
           _hammerManager.on("doubletap", function (ev) {
-            ev.preventDefault();
+            //ev.gesture.preventDefault();
             handlePaintColorChange(ev, cell.id);
           });
         }
