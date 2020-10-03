@@ -155,7 +155,9 @@ body {
 .cyan {
     background-color: rgb(64, 255, 255);
 }
+
 /* Underline text with color */
+
 .red-underline {
     border-bottom: 3px solid rgb(255, 64, 64);
 }
@@ -210,4 +212,16 @@ body {
 
 .cyan-underline {
     border-bottom: 3px solid rgb(64, 255, 255);
+}
+
+@media (max-width: 768px) {
+    .solution {
+        height: 300px;
+    }
+    #puzzle {
+        height: 325px;
+    }
+    #learnedRules {
+        max-height: 300px;
+    }
 }
