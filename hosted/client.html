@@ -15,7 +15,7 @@
   <script src="bundle.js"> </script>
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/client.css">
-  <!-- Lodash for object comparison -->
+  <!-- Lodash for utility -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"
     integrity="sha512-90vH1Z83AJY9DmlWa8WkjkV79yfS2n2Oxhsi2dZbIv0nC4E6m5AbH8Nh156kkM7JePmqD6tcZsfad1ueoaovww=="
     crossorigin="anonymous"></script>
@@ -24,6 +24,12 @@
 <body>
   <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand">Paint Me This</a>
+    <button class="btn btn-outline-light my-2 my-sm-0" type="button" data-toggle="popover" data-placement="left"
+      title="Instructions" data-container="nav"
+      data-content="Paint the cells on the right grid to match the left! Interact with the canvas by using LMB to paint, 
+      and RMB to change your paint color. Experiment with different combinations to solve the puzzle, the fewer clicks you make the better your score!">
+      ?
+    </button>
   </nav>
   <div class="container-fluid" id="container">
     <div class="row ">
@@ -40,19 +46,33 @@
             <option value="5">5</option>
           </select>
           <div class="input-group-append">
-            <button class="btn btn-dark" type="button" id='levelButton'>Load/Reset</button>
+            <button class="btn btn-dark" type="button" id='levelButton'>Reset</button>
           </div>
         </div>
       </div>
     </div>
+    <div class="container" id="scoresContainer">
+      <div class="row">
+        <div class="col-md text-white" id="scoresLabel">Top Player Scores</div>
+      </div>
+      <div class="row align-items-center">
+        <div class="col-md-3 text-white bg-dark scoresText" id="score1">1.)</div>
+        <div class="col-md-3 text-white bg-dark scoresText" id="score2">2.)</div>
+        <div class="col-md-3 text-white bg-dark scoresText" id="score3">3.)</div>
+      </div>
+    </div>
     <div class="row">
-      <div class="col-md-2 bg-dark" id='learnedRulesContainer'>
-        <p class="text-white bg-dark" id='learnedRulesHead'>Learned Rules</p>
-        <ul class="bg-dark text-white" id='learnedRules'>
-        </ul>
+      <div class="col-md-2">
+        <div class="bg-dark" id='learnedRulesContainer'>
+          <p class="text-white bg-dark" id='learnedRulesHead'>Learned Rules</p>
+          <div id='learnedRules' class="bg-dark text-white">
+            <ul class="bg-dark text-white">
+          </div>
+          </ul>
+        </div>
       </div>
       <div class="solution col-md-5">
-        <div class="text-white bg-dark center-text">Paint Me</div>
+        <div class="text-white bg-dark center-text" id="solutionLabel">Paint Me</div>
         <table id='solution'>
           <tr id='s1'>
             <td id='s11'></td>
@@ -72,19 +92,15 @@
         </table>
       </div>
       <div class="col-md-5">
-        <table style="height: 150px;">
-          <th>
-            <tr class="text-white bg-dark center-text">
-              <td>Extra</td>
-              <td>Paint Color</td>
-            </tr>
-          </th>
-          <tr>
-            <td id="extra"></td>
-            <td id="active"></td>
-          </tr>
-        </table>
         <table id='puzzle'>
+          <tr class="text-white bg-dark center-text" id="paintHeader">
+            <td>Extra</td>
+            <td colspan="2">Paint Color</td>
+          </tr>
+          <tr id="paintRow">
+            <td id="extra"></td>
+            <td colspan="2" id="active"></td>
+          </tr>
           <tr id='p1'>
             <td id='p11'></td>
             <td id='p12'></td>
@@ -103,27 +119,27 @@
         </table>
       </div>
       <div class="modal fade" id="finishedModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        aria-labelledby="finishedLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="staticBackdropLabel">Level Finished!</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <h5 class="modal-title" id="finishedLabel">Level Finished!</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="margin-left: 10px;">
               <div class="row" id="scoreForModal"></div>
               <div class="row">
-                <div class="input-group level-select">
+                <div class="level-select">
                   <input type="text" class="form-control" id='playerName' placeholder="Recipient's username"
-                    aria-label="Your Name">
+                    aria-label="Your Name" aria-describedby="nameHelper" class="form-control">
+                  <small id="nameHelper" class="form-text text-muted">
+                    Your name can only contain characters A-Z
+                  </small>
                 </div>
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary" id='submitButton'>Submit</button>
+
             </div>
           </div>
         </div>

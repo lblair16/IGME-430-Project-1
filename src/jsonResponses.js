@@ -1,9 +1,11 @@
+// send back json
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
   response.end();
 };
 
+// send back not found message for unknown requests
 const notFound = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found.',

@@ -78,6 +78,7 @@ const puzzles = {
   },
 };
 
+// send back json response
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
@@ -97,7 +98,7 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-//send back the requested puzzle or all puzzles
+// send back the requested puzzle or all puzzles
 const getPuzzles = (request, response, params) => {
   // get the method type
   const { method } = request;
@@ -125,13 +126,17 @@ const updatePuzzle = (request, response, body) => {
   if (body.level && body.score && body.name) {
     if (puzzles[body.level]) {
       puzzles[body.level].completed = true;
-      // existing score for player, update it if higher
+      // existing score for player, update it if lower (lower score is better)
       if (puzzles[body.level].scores[body.name]) {
-        puzzles[body.level].scores[body.name] = puzzles[body.level].scores[body.name] < body.score
-          ? body.score : puzzles[body.level].scores[body.name];
+        puzzles[body.level].scores[body.name] = puzzles[body.level].scores[body.name].score
+        > body.score
+          ? { score: body.score, name: body.name } : puzzles[body.level].scores[body.name];
         return respondJSONMeta(request, response, 204);
       }
-      puzzles[body.level].scores[body.name] = body.score;
+      puzzles[body.level].scores[body.name] = {
+        score: body.score,
+        name: body.name,
+      };
       const responseJSON = {
         message: `Successfully added a new user score for puzzle ${body.level}.`,
       };

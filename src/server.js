@@ -7,9 +7,7 @@ const puzzleHandler = require('./puzzles.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-// added route to get for our ES5 JS bundle.
-// This bundle will be created by our babel
-// watch/build scripts in package.json
+// struct for get requests
 const urlStructGet = {
   '/': htmlHandler.getIndex,
   '/bundle.js': htmlHandler.getBundle,
@@ -18,12 +16,13 @@ const urlStructGet = {
   notFound: jsonHandler.notFound,
 };
 
+// struct for post requests
 const urlStructPost = {
   '/updatePuzzle': puzzleHandler.updatePuzzle,
   notFound: jsonHandler.notFound,
-}
+};
 
-// handle POST request for updating the puzzle
+// handle POST request for updating the puzzle, adapted from hw code
 const handlePost = (request, response, pathName) => {
   if (urlStructPost[pathName]) {
     const res = response;
@@ -60,6 +59,7 @@ const handlePost = (request, response, pathName) => {
   }
 };
 
+// handle requests
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
@@ -75,5 +75,3 @@ const onRequest = (request, response) => {
 };
 
 http.createServer(onRequest).listen(port);
-
-console.log(`Listening on 127.0.0.1: ${port}`);

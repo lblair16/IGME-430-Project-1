@@ -44,6 +44,7 @@ function storageAvailable(type) {
 
 
 var loadPuzzle = function loadPuzzle(level) {
+  currScore = 0;
   fetch("/puzzle?level=".concat(level), {
     method: 'GET',
     headers: {
@@ -108,14 +109,31 @@ var setPuzzle = function setPuzzle(puzzle) {
 
 
   document.querySelector('#extra').className = puzzle.extra;
-  setPaintColor(puzzle.extra);
+  setPaintColor(puzzle.extra); //set the high scores if they exist
+
+  if (!_.isEmpty(puzzle.scores)) {
+    var scores = _.orderBy(puzzle.scores, ['score'], ['asc']);
+
+    for (var _i = 0; _i < 3; _i++) {
+      if (scores[_i]) {
+        document.querySelector("#score".concat(_i + 1)).innerHTML = "".concat(_i + 1, ".) ").concat(scores[_i].name, " ").concat(scores[_i].score);
+      } else {
+        document.querySelector("#score".concat(_i + 1)).innerHTML = "".concat(_i + 1, ".)");
+      }
+    }
+  } else {
+    for (var _i2 = 0; _i2 < 3; _i2++) {
+      document.querySelector("#score".concat(_i2 + 1)).innerHTML = "".concat(_i2 + 1, ".)");
+    }
+  }
 }; //set the active paint color and update UI to match
 
 
 var setPaintColor = function setPaintColor(color) {
   paintColor = color;
   document.querySelector('#active').className = color;
-};
+}; //all color combinations that can be used
+
 
 var colorCombinations = (_colorCombinations = {
   //rgb
@@ -178,11 +196,20 @@ var handlePaintColorChange = function handlePaintColorChange(e, cellId) {
 
 
 var submitScore = function submitScore(e) {
-  //create the body for post request
+  var name = document.querySelector('#playerName').value;
+
+  if (!name || !/^[a-zA-Z]+$/.test(name)) {
+    console.log("invalid name");
+    return;
+  } //hide the modal
+
+
+  $('#finishedModal').modal('hide'); //create the body for post request
+
   var jsonBody = {
     level: currLevel,
     score: currScore,
-    name: document.querySelector('#playerName').value
+    name: name
   };
   fetch('/updatePuzzle', {
     method: 'POST',
@@ -192,6 +219,8 @@ var submitScore = function submitScore(e) {
     },
     body: JSON.stringify(jsonBody)
   }).then(function (response) {
+    loadPuzzle(currLevel);
+
     if (response.status === 201) {
       response.json().then(function (data) {
         console.log('Success:', data);
@@ -226,12 +255,11 @@ var setLearnedRules = function setLearnedRules() {
     if (learnedRules && Object.keys(learnedRules).length > 0) {
       displayLearnedRules();
     }
-
-    console.log(learnedRules);
   } else {
     console.log('Please enable local storage to experience all features');
   }
-};
+}; //show rules this player has learned 
+
 
 var displayLearnedRules = function displayLearnedRules() {
   //add the learned rules to the UI
@@ -239,14 +267,15 @@ var displayLearnedRules = function displayLearnedRules() {
   var bigString = '';
   var keys = Object.keys(learnedRules);
 
-  for (var _i = 0, _keys = keys; _i < _keys.length; _i++) {
-    var key = _keys[_i];
+  for (var _i3 = 0, _keys = keys; _i3 < _keys.length; _i3++) {
+    var key = _keys[_i3];
     //class='${colorCombinations[key]}' not sure if I liked how it looked, removing for now
-    bigString += "<li >".concat(learnedRules[key], "</li>");
+    bigString += "<li>".concat(learnedRules[key], "</li>");
   }
 
   target.innerHTML = bigString;
-};
+}; //initalization 
+
 
 var init = function init() {
   //add event listeners
@@ -286,10 +315,21 @@ var init = function init() {
     return loadPuzzle(currLevel);
   });
   document.querySelector('#levelSelect').addEventListener('change', function (e) {
-    return currLevel = e.target.value;
+    currLevel = e.target.value;
+    loadPuzzle(currLevel);
   });
   document.querySelector('#submitButton').addEventListener('click', function (e) {
     return submitScore();
+  }); //enable popovers
+
+  $(function () {
+    $('[data-toggle="popover"]').popover({
+      trigger: 'focus'
+    });
+  }); //reset score after submitting score
+
+  $('#finishedModal').on('hidden.bs.modal', function (e) {
+    currScore = 0;
   }); //load the first puzzle
 
   loadPuzzle(currLevel);
