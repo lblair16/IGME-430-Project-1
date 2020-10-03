@@ -28,7 +28,8 @@ var puzzleSolution;
 var currLevel = 1;
 var currScore = 0;
 var learnedRules;
-var localStorage; //from https://stackoverflow.com/questions/16427636/check-if-localstorage-is-available
+var localStorage;
+var lastTouchEnd = 0; //from https://stackoverflow.com/questions/16427636/check-if-localstorage-is-available
 
 function storageAvailable(type) {
   try {
@@ -282,42 +283,137 @@ var displayLearnedRules = function displayLearnedRules() {
   }
 
   target.innerHTML = bigString;
-}; //initalization 
+}; //https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
+
+
+function is_touch_device() {
+  try {
+    document.createEvent("TouchEvent");
+    return true;
+  } catch (e) {
+    return false;
+  }
+} //initalization 
 
 
 var init = function init() {
   //add event listeners
-  var cells = document.querySelectorAll("td");
+  var cells = document.querySelectorAll("td"); //if we're on a touch screen device use hammer to create the touch events
 
-  var _iterator3 = _createForOfIteratorHelper(cells),
-      _step3;
+  if (is_touch_device()) {
+    //show the instructions for mobile and hide the desktop ones
+    document.querySelector('#mobileInstructions').style.display = 'inherit';
+    document.querySelector('#instructionsButton').style.display = 'none'; //prevent zoom https://stackoverflow.com/questions/37808180/disable-viewport-zooming-ios-10-safari
 
-  try {
-    var _loop = function _loop() {
-      var cell = _step3.value;
+    document.addEventListener('touchend', function (event) {
+      var now = new Date().getTime();
 
-      if (cell.id.includes('p')) {
-        cell.addEventListener('click', function () {
-          return handleCellChange(cell.id);
-        });
-        cell.addEventListener('contextmenu', function (e) {
-          return handlePaintColorChange(e, cell.id);
-        });
-      } else if (cell.id === 'extra') {
-        cell.addEventListener('contextmenu', function (e) {
-          return handlePaintColorChange(e, cell.id);
-        });
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
       }
-    };
 
-    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-      _loop();
+      lastTouchEnd = now;
+    }, false);
+
+    var _iterator3 = _createForOfIteratorHelper(cells),
+        _step3;
+
+    try {
+      var _loop = function _loop() {
+        var cell = _step3.value;
+
+        if (cell.id.includes('p')) {
+          //adapted from https://codepen.io/jtangelder/pen/pBuIw
+          var hammerManager = new Hammer.Manager(cell); // Tap recognizer with minimal 2 taps
+
+          hammerManager.add(new Hammer.Tap({
+            event: 'doubletap',
+            taps: 2
+          })); // Single tap recognizer
+
+          hammerManager.add(new Hammer.Tap({
+            event: 'singletap'
+          })); // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+
+          hammerManager.get('doubletap').recognizeWith('singletap'); // we only want to trigger a tap, when we don't have detected a doubletap
+
+          hammerManager.get('singletap').requireFailure('doubletap');
+          hammerManager.on("singletap", function () {
+            handleCellChange(cell.id);
+          });
+          hammerManager.on("doubletap", function (ev) {
+            handlePaintColorChange(ev, cell.id);
+          });
+        } else if (cell.id === 'extra') {
+          var _hammerManager = new Hammer.Manager(cell); // Tap recognizer with minimal 2 taps
+
+
+          _hammerManager.add(new Hammer.Tap({
+            event: 'doubletap',
+            taps: 2
+          })); // Single tap recognizer
+
+
+          _hammerManager.add(new Hammer.Tap({
+            event: 'singletap'
+          })); // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+
+
+          _hammerManager.get('doubletap').recognizeWith('singletap'); // we only want to trigger a tap, when we don't have detected a doubletap
+
+
+          _hammerManager.get('singletap').requireFailure('doubletap');
+
+          _hammerManager.on("singletap", function () {
+            return;
+          });
+
+          _hammerManager.on("doubletap", function (ev) {
+            handlePaintColorChange(ev, cell.id);
+          });
+        }
+      };
+
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        _loop();
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
     }
-  } catch (err) {
-    _iterator3.e(err);
-  } finally {
-    _iterator3.f();
-  }
+  } //not a touch device, use normal events
+  else {
+      var _iterator4 = _createForOfIteratorHelper(cells),
+          _step4;
+
+      try {
+        var _loop2 = function _loop2() {
+          var cell = _step4.value;
+
+          if (cell.id.includes('p')) {
+            cell.addEventListener('click', function () {
+              return handleCellChange(cell.id);
+            });
+            cell.addEventListener('contextmenu', function (e) {
+              return handlePaintColorChange(e, cell.id);
+            });
+          } else if (cell.id === 'extra') {
+            cell.addEventListener('contextmenu', function (e) {
+              return handlePaintColorChange(e, cell.id);
+            });
+          }
+        };
+
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          _loop2();
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+    }
 
   document.querySelector("#levelButton").addEventListener('click', function (e) {
     return loadPuzzle(currLevel);
