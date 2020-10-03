@@ -227,10 +227,10 @@ const submitScore = (e) => {
     body: JSON.stringify(jsonBody),
   }).then((response) => {
     //load the next level
-    if(currLevel !== 5){
+    if (currLevel !== 5) {
       currLevel++;
     }
-    else{
+    else {
       currLevel = 1;
     }
     document.querySelector('#levelSelect').value = String(currLevel);
@@ -288,17 +288,59 @@ const displayLearnedRules = () => {
   target.innerHTML = bigString;
 }
 
+//https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
+function is_touch_device() {
+  try {
+    document.createEvent("TouchEvent");
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 //initalization 
 const init = () => {
   //add event listeners
   let cells = document.querySelectorAll("td");
-  for (let cell of cells) {
-    if (cell.id.includes('p')) {
-      cell.addEventListener('click', () => handleCellChange(cell.id));
-      cell.addEventListener('contextmenu', (e) => handlePaintColorChange(e, cell.id));
+  //if we're on a touch screen device use hammer to create the touch events
+  if (is_touch_device()) {
+    // let hammerObjs = [];
+    for (let cell of cells) {
+      if (cell.id.includes('p')) {
+        //adapted from https://codepen.io/jtangelder/pen/pBuIw
+        let hammerManager = new Hammer.Manager(cell);
+        // Tap recognizer with minimal 2 taps
+        hammerManager.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
+        // Single tap recognizer
+        hammerManager.add(new Hammer.Tap({ event: 'singletap' }));
+
+        // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+        hammerManager.get('doubletap').recognizeWith('singletap');
+        // we only want to trigger a tap, when we don't have detected a doubletap
+        hammerManager.get('singletap').requireFailure('doubletap');
+
+        hammerManager.on("singletap", function () {
+          handleCellChange(cell.id);
+        });
+        hammerManager.on("doubletap", function (ev) {
+          handlePaintColorChange(ev, cell.id)
+        });
+      }
+      else if (cell.id === 'extra') {
+        cell.addEventListener('contextmenu', (e) => handlePaintColorChange(e, cell.id));
+      }
     }
-    else if (cell.id === 'extra') {
-      cell.addEventListener('contextmenu', (e) => handlePaintColorChange(e, cell.id));
+  }
+  //not a touch device, use normal events
+  else {
+    for (let cell of cells) {
+      if (cell.id.includes('p')) {
+        cell.addEventListener('click', () => handleCellChange(cell.id));
+        cell.addEventListener('contextmenu', (e) => handlePaintColorChange(e, cell.id));
+      }
+      else if (cell.id === 'extra') {
+        cell.addEventListener('contextmenu', (e) => handlePaintColorChange(e, cell.id));
+      }
     }
   }
   document.querySelector("#levelButton").addEventListener('click', (e) => loadPuzzle(currLevel));
