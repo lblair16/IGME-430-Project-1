@@ -5,8 +5,7 @@
   <title>Paint Me This</title>
   <!-- Required meta tags -->
   <meta charset="utf-8">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
-  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -30,7 +29,7 @@
 <body>
   <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand">Paint Me This</a>
-    <button class="btn btn-outline-light my-2 my-sm-0" type="button" data-toggle="popover" data-placement="left"
+    <button class="btn btn-outline-light my-2 my-sm-0" type="button" data-toggle="popover" data-placement="left" id="instructionsButton"
       title="Instructions" data-container="nav" data-content="Paint the cells on the right grid to match the left! Interact with the right grid by using LMB to paint the clicked cell, 
       and RMB to change your paint color to the clicked cell. Experiment with different combinations to solve the puzzle, the goal is to solve it in as
       few clicks as possible using the starting and extra colors. The lower your score the better!">
@@ -56,6 +55,13 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="row" id="mobileInstructions">
+      <h5 class="text-white">Instructions</h5>
+      <p class="text-white">Paint the cells on the bottom grid to match the top! Interact with the bottom grid by tapping once to paint the 
+        cell, and tapping twice change your paint color to the tapped cell. Experiment with different combinations to
+        solve the puzzle, the goal is to solve it in as
+        few moves as possible using the starting and extra colors. The lower your score the better!</p>
     </div>
     <div class="container" id="scoresContainer">
       <div class="row">

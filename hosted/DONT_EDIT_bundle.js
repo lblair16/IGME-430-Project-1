@@ -301,7 +301,10 @@ var init = function init() {
   var cells = document.querySelectorAll("td"); //if we're on a touch screen device use hammer to create the touch events
 
   if (is_touch_device()) {
-    //prevent zoom https://stackoverflow.com/questions/37808180/disable-viewport-zooming-ios-10-safari
+    //show the instructions for mobile and hide the desktop ones
+    document.querySelector('#mobileInstructions').style.display = 'inherit';
+    document.querySelector('#instructionsButton').style.display = 'none'; //prevent zoom https://stackoverflow.com/questions/37808180/disable-viewport-zooming-ios-10-safari
+
     document.addEventListener('touchend', function (event) {
       var now = new Date().getTime();
 
@@ -336,11 +339,9 @@ var init = function init() {
 
           hammerManager.get('singletap').requireFailure('doubletap');
           hammerManager.on("singletap", function () {
-            //ev.gesture.preventDefault();
             handleCellChange(cell.id);
           });
           hammerManager.on("doubletap", function (ev) {
-            //ev.gesture.preventDefault();
             handlePaintColorChange(ev, cell.id);
           });
         } else if (cell.id === 'extra') {
@@ -368,7 +369,6 @@ var init = function init() {
           });
 
           _hammerManager.on("doubletap", function (ev) {
-            //ev.gesture.preventDefault();
             handlePaintColorChange(ev, cell.id);
           });
         }

@@ -305,6 +305,9 @@ const init = () => {
   let cells = document.querySelectorAll("td");
   //if we're on a touch screen device use hammer to create the touch events
   if (is_touch_device()) {
+    //show the instructions for mobile and hide the desktop ones
+    document.querySelector('#mobileInstructions').style.display = 'inherit';
+    document.querySelector('#instructionsButton').style.display = 'none';
     //prevent zoom https://stackoverflow.com/questions/37808180/disable-viewport-zooming-ios-10-safari
     document.addEventListener('touchend', function (event) {
       let now = (new Date()).getTime();
@@ -328,11 +331,9 @@ const init = () => {
         hammerManager.get('singletap').requireFailure('doubletap');
 
         hammerManager.on("singletap", function () {
-          //ev.gesture.preventDefault();
           handleCellChange(cell.id);
         });
         hammerManager.on("doubletap", function (ev) {
-          //ev.gesture.preventDefault();
           handlePaintColorChange(ev, cell.id)
         });
       }
@@ -352,7 +353,6 @@ const init = () => {
           return;
         });
         hammerManager.on("doubletap", function (ev) {
-          //ev.gesture.preventDefault();
           handlePaintColorChange(ev, cell.id)
         });
       }
