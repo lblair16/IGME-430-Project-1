@@ -217,11 +217,19 @@ body {
 @media (max-width: 768px) {
     .solution {
         height: 300px;
+        margin-bottom: 15px;
     }
     #puzzle {
         height: 325px;
+        margin-bottom: 15px;
     }
     #learnedRules {
         max-height: 300px;
+    }
+    #learnedRulesContainer {
+        margin-right: 10px !important;
+        margin-top: 10px !important;
+        margin-left: 10px !important;
+        width: auto;
     }
 }
