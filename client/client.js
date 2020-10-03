@@ -17,6 +17,7 @@ let currLevel = 1;
 let currScore = 0;
 let learnedRules;
 let localStorage;
+let lastTouchEnd = 0;
 
 //from https://stackoverflow.com/questions/16427636/check-if-localstorage-is-available
 function storageAvailable(type) {
@@ -304,12 +305,14 @@ const init = () => {
   let cells = document.querySelectorAll("td");
   //if we're on a touch screen device use hammer to create the touch events
   if (is_touch_device()) {
-    //prevent zoom
-    if (document.addEventListener) {
-      document.addEventListener('touchmove', function (e) {
-        e.preventDefault();
-      });
-    }
+    //prevent zoom https://stackoverflow.com/questions/37808180/disable-viewport-zooming-ios-10-safari
+    document.addEventListener('touchend', function (event) {
+      let now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
     for (let cell of cells) {
       if (cell.id.includes('p')) {
         //adapted from https://codepen.io/jtangelder/pen/pBuIw

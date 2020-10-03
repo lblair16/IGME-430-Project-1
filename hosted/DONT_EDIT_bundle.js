@@ -28,7 +28,8 @@ var puzzleSolution;
 var currLevel = 1;
 var currScore = 0;
 var learnedRules;
-var localStorage; //from https://stackoverflow.com/questions/16427636/check-if-localstorage-is-available
+var localStorage;
+var lastTouchEnd = 0; //from https://stackoverflow.com/questions/16427636/check-if-localstorage-is-available
 
 function storageAvailable(type) {
   try {
@@ -300,12 +301,16 @@ var init = function init() {
   var cells = document.querySelectorAll("td"); //if we're on a touch screen device use hammer to create the touch events
 
   if (is_touch_device()) {
-    //prevent zoom
-    if (document.addEventListener) {
-      document.addEventListener('touchmove', function (e) {
-        e.preventDefault();
-      });
-    }
+    //prevent zoom https://stackoverflow.com/questions/37808180/disable-viewport-zooming-ios-10-safari
+    document.addEventListener('touchend', function (event) {
+      var now = new Date().getTime();
+
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+
+      lastTouchEnd = now;
+    }, false);
 
     var _iterator3 = _createForOfIteratorHelper(cells),
         _step3;
