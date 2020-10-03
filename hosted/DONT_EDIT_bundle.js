@@ -300,6 +300,13 @@ var init = function init() {
   var cells = document.querySelectorAll("td"); //if we're on a touch screen device use hammer to create the touch events
 
   if (is_touch_device()) {
+    //prevent zoom
+    if (document.addEventListener) {
+      document.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+      });
+    }
+
     var _iterator3 = _createForOfIteratorHelper(cells),
         _step3;
 

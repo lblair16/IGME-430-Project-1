@@ -304,6 +304,12 @@ const init = () => {
   let cells = document.querySelectorAll("td");
   //if we're on a touch screen device use hammer to create the touch events
   if (is_touch_device()) {
+    //prevent zoom
+    if (document.addEventListener) {
+      document.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+      });
+    }
     for (let cell of cells) {
       if (cell.id.includes('p')) {
         //adapted from https://codepen.io/jtangelder/pen/pBuIw
