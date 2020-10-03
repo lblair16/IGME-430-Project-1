@@ -319,10 +319,11 @@ const init = () => {
         hammerManager.get('singletap').requireFailure('doubletap');
 
         hammerManager.on("singletap", function () {
+          ev.gesture.preventDefault()
           handleCellChange(cell.id);
         });
         hammerManager.on("doubletap", function (ev) {
-          ev.preventDefault();
+          ev.gesture.preventDefault()
           handlePaintColorChange(ev, cell.id)
         });
       }
@@ -342,7 +343,7 @@ const init = () => {
          return;
         });
         hammerManager.on("doubletap", function (ev) {
-          ev.preventDefault();
+          ev.gesture.preventDefault()
           handlePaintColorChange(ev, cell.id)
         });
       }
