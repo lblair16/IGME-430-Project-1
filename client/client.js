@@ -145,6 +145,7 @@ const colorCombinations = {
   blackred: 'darkRed',
   blackgreen: 'darkGreen',
   blackblue: 'darkBlue',
+  blackwhite: 'black',
   //black+lightcolor
   blacklightRed: 'red',
   blacklightGreen: 'green',
@@ -225,6 +226,14 @@ const submitScore = (e) => {
     },
     body: JSON.stringify(jsonBody),
   }).then((response) => {
+    //load the next level
+    if(currLevel !== 5){
+      currLevel++;
+    }
+    else{
+      currLevel = 1;
+    }
+    document.querySelector('#levelSelect').value = String(currLevel);
     loadPuzzle(currLevel);
     if (response.status === 201) {
       response.json().then(data => {
@@ -244,7 +253,8 @@ const submitScore = (e) => {
 //add the learned rule and set local storage if possible
 const addLearnedRule = (paintColor, cellColor, combination) => {
   const id = paintColor + cellColor;
-  const rule = `${_.startCase(paintColor)} paint + ${_.startCase(cellColor)} block = ${combination}`
+  const rule = `<span class="${paintColor}-underline">${_.startCase(paintColor)}</span> paint + 
+    <span class="${cellColor}-underline">${_.startCase(cellColor)}</span> block = <span class="${combination}-underline">${_.startCase(combination)}</span>`
   learnedRules[id] = rule;
   displayLearnedRules();
   if (localStorage) {

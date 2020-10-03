@@ -30,8 +30,9 @@ td {
 }
 
 li {
-    padding: 3px;
-    border-bottom: 1px solid black;
+    padding: 5px;
+    border-bottom: 2px solid black;
+    list-style: none;
 }
 
 body {
@@ -52,16 +53,14 @@ body {
 }
 
 #paintRow {
-    height: 20px !important;
+    height: 25px !important;
+    border-bottom: 3px solid #171717;
 }
 
 #learnedRulesContainer {
     width: 100%;
     margin-top: 10px;
     margin-left: 10px;
-    /* max-height: 80vh;
-    overflow: auto; */
-    /* padding-right: 10px; */
 }
 
 #learnedRules {
@@ -88,14 +87,11 @@ body {
 }
 
 .scoresText {
+    margin-left: 30px;
     margin-right: 30px;
     padding: 3px;
     margin-top: 10px;
 }
-
-/* #scoresContainer {
-    align-items: center;
-} */
 
 /* Color classes to set color of cells */
 
@@ -153,4 +149,60 @@ body {
 
 .cyan {
     background-color: rgb(64, 255, 255);
+}
+/* Underline text with color */
+.red-underline {
+    border-bottom: 3px solid rgb(255, 64, 64);
+}
+
+.green-underline {
+    border-bottom: 3px solid rgb(64, 255, 64);
+}
+
+.blue-underline {
+    border-bottom: 3px solid rgb(64, 64, 255);
+}
+
+.white-underline {
+    border-bottom: 3px solid rgb(255, 255, 255);
+}
+
+.black-underline {
+    border-bottom: 3px solid rgb(0, 0, 0);
+}
+
+.darkRed-underline {
+    border-bottom: 3px solid rgb(128, 0, 0);
+}
+
+.darkGreen-underline {
+    border-bottom: 3px solid rgb(0, 128, 0);
+}
+
+.darkBlue-underline {
+    border-bottom: 3px solid rgb(0, 0, 128);
+}
+
+.lightRed-underline {
+    border-bottom: 3px solid rgb(255, 128, 128);
+}
+
+.lightGreen-underline {
+    border-bottom: 3px solid rgb(128, 255, 128);
+}
+
+.lightBlue-underline {
+    border-bottom: 3px solid rgb(128, 128, 255);
+}
+
+.yellow-underline {
+    border-bottom: 3px solid rgb(255, 255, 64);
+}
+
+.magenta-underline {
+    border-bottom: 3px solid rgb(255, 64, 255);
+}
+
+.cyan-underline {
+    border-bottom: 3px solid rgb(64, 255, 255);
 }

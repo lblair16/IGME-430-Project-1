@@ -163,7 +163,7 @@ var colorCombinations = (_colorCombinations = {
   lightBluewhite: 'lightBlue',
   //darkcolor+white
   darkRedwhite: 'darkRed'
-}, _defineProperty(_colorCombinations, "lightGreenwhite", 'darkGreen'), _defineProperty(_colorCombinations, "darkBluewhite", 'darkBlue'), _defineProperty(_colorCombinations, "whitered", 'lightRed'), _defineProperty(_colorCombinations, "whitegreen", 'lightGreen'), _defineProperty(_colorCombinations, "whiteblue", 'lightBlue'), _defineProperty(_colorCombinations, "whitedarkRed", 'red'), _defineProperty(_colorCombinations, "whitedarkGreen", 'green'), _defineProperty(_colorCombinations, "whitedarkBlue", 'blue'), _defineProperty(_colorCombinations, "blackred", 'darkRed'), _defineProperty(_colorCombinations, "blackgreen", 'darkGreen'), _defineProperty(_colorCombinations, "blackblue", 'darkBlue'), _defineProperty(_colorCombinations, "blacklightRed", 'red'), _defineProperty(_colorCombinations, "blacklightGreen", 'green'), _defineProperty(_colorCombinations, "blacklightBlue", 'blue'), _defineProperty(_colorCombinations, "redcyan", 'black'), _defineProperty(_colorCombinations, "redyellow", 'black'), _defineProperty(_colorCombinations, "redmagenta", 'black'), _defineProperty(_colorCombinations, "greencyan", 'black'), _defineProperty(_colorCombinations, "greenyellow", 'black'), _defineProperty(_colorCombinations, "greenmagenta", 'black'), _defineProperty(_colorCombinations, "bluecyan", 'black'), _defineProperty(_colorCombinations, "blueyellow", 'black'), _defineProperty(_colorCombinations, "bluemagenta", 'black'), _defineProperty(_colorCombinations, "cyanred", 'white'), _defineProperty(_colorCombinations, "yellowred", 'white'), _defineProperty(_colorCombinations, "magentared", 'white'), _defineProperty(_colorCombinations, "cyangreen", 'white'), _defineProperty(_colorCombinations, "yellowgreen", 'white'), _defineProperty(_colorCombinations, "magentagreen", 'white'), _defineProperty(_colorCombinations, "cyanblue", 'white'), _defineProperty(_colorCombinations, "yellowblue", 'white'), _defineProperty(_colorCombinations, "magentablue", 'white'), _colorCombinations); //change the color of the cell depending on the combination between its cell and the paint color
+}, _defineProperty(_colorCombinations, "lightGreenwhite", 'darkGreen'), _defineProperty(_colorCombinations, "darkBluewhite", 'darkBlue'), _defineProperty(_colorCombinations, "whitered", 'lightRed'), _defineProperty(_colorCombinations, "whitegreen", 'lightGreen'), _defineProperty(_colorCombinations, "whiteblue", 'lightBlue'), _defineProperty(_colorCombinations, "whitedarkRed", 'red'), _defineProperty(_colorCombinations, "whitedarkGreen", 'green'), _defineProperty(_colorCombinations, "whitedarkBlue", 'blue'), _defineProperty(_colorCombinations, "blackred", 'darkRed'), _defineProperty(_colorCombinations, "blackgreen", 'darkGreen'), _defineProperty(_colorCombinations, "blackblue", 'darkBlue'), _defineProperty(_colorCombinations, "blackwhite", 'black'), _defineProperty(_colorCombinations, "blacklightRed", 'red'), _defineProperty(_colorCombinations, "blacklightGreen", 'green'), _defineProperty(_colorCombinations, "blacklightBlue", 'blue'), _defineProperty(_colorCombinations, "redcyan", 'black'), _defineProperty(_colorCombinations, "redyellow", 'black'), _defineProperty(_colorCombinations, "redmagenta", 'black'), _defineProperty(_colorCombinations, "greencyan", 'black'), _defineProperty(_colorCombinations, "greenyellow", 'black'), _defineProperty(_colorCombinations, "greenmagenta", 'black'), _defineProperty(_colorCombinations, "bluecyan", 'black'), _defineProperty(_colorCombinations, "blueyellow", 'black'), _defineProperty(_colorCombinations, "bluemagenta", 'black'), _defineProperty(_colorCombinations, "cyanred", 'white'), _defineProperty(_colorCombinations, "yellowred", 'white'), _defineProperty(_colorCombinations, "magentared", 'white'), _defineProperty(_colorCombinations, "cyangreen", 'white'), _defineProperty(_colorCombinations, "yellowgreen", 'white'), _defineProperty(_colorCombinations, "magentagreen", 'white'), _defineProperty(_colorCombinations, "cyanblue", 'white'), _defineProperty(_colorCombinations, "yellowblue", 'white'), _defineProperty(_colorCombinations, "magentablue", 'white'), _colorCombinations); //change the color of the cell depending on the combination between its cell and the paint color
 
 var handleCellChange = function handleCellChange(cellId) {
   var cell = document.querySelector("#".concat(cellId));
@@ -219,6 +219,14 @@ var submitScore = function submitScore(e) {
     },
     body: JSON.stringify(jsonBody)
   }).then(function (response) {
+    //load the next level
+    if (currLevel !== 5) {
+      currLevel++;
+    } else {
+      currLevel = 1;
+    }
+
+    document.querySelector('#levelSelect').value = String(currLevel);
     loadPuzzle(currLevel);
 
     if (response.status === 201) {
@@ -238,7 +246,7 @@ var submitScore = function submitScore(e) {
 
 var addLearnedRule = function addLearnedRule(paintColor, cellColor, combination) {
   var id = paintColor + cellColor;
-  var rule = "".concat(_.startCase(paintColor), " paint + ").concat(_.startCase(cellColor), " block = ").concat(combination);
+  var rule = "<span class=\"".concat(paintColor, "-underline\">").concat(_.startCase(paintColor), "</span> paint + \n    <span class=\"").concat(cellColor, "-underline\">").concat(_.startCase(cellColor), "</span> block = <span class=\"").concat(combination, "-underline\">").concat(_.startCase(combination), "</span>");
   learnedRules[id] = rule;
   displayLearnedRules();
 
