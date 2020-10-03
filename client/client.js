@@ -330,8 +330,17 @@ const init = () => {
         let hammerManager = new Hammer.Manager(cell);
         // Tap recognizer with minimal 2 taps
         hammerManager.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
+        // Single tap recognizer
+        hammerManager.add(new Hammer.Tap({ event: 'singletap' }));
+
         // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
         hammerManager.get('doubletap').recognizeWith('singletap');
+        // we only want to trigger a tap, when we don't have detected a doubletap
+        hammerManager.get('singletap').requireFailure('doubletap');
+
+        hammerManager.on("singletap", function () {
+         return;
+        });
         hammerManager.on("doubletap", function (ev) {
           ev.preventDefault();
           handlePaintColorChange(ev, cell.id)
