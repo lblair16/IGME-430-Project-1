@@ -304,7 +304,6 @@ const init = () => {
   let cells = document.querySelectorAll("td");
   //if we're on a touch screen device use hammer to create the touch events
   if (is_touch_device()) {
-    // let hammerObjs = [];
     for (let cell of cells) {
       if (cell.id.includes('p')) {
         //adapted from https://codepen.io/jtangelder/pen/pBuIw
@@ -323,11 +322,20 @@ const init = () => {
           handleCellChange(cell.id);
         });
         hammerManager.on("doubletap", function (ev) {
+          ev.preventDefault();
           handlePaintColorChange(ev, cell.id)
         });
       }
       else if (cell.id === 'extra') {
-        cell.addEventListener('contextmenu', (e) => handlePaintColorChange(e, cell.id));
+        let hammerManager = new Hammer.Manager(cell);
+        // Tap recognizer with minimal 2 taps
+        hammerManager.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
+        // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+        hammerManager.get('doubletap').recognizeWith('singletap');
+        hammerManager.on("doubletap", function (ev) {
+          ev.preventDefault();
+          handlePaintColorChange(ev, cell.id)
+        });
       }
     }
   }
