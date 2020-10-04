@@ -6,18 +6,42 @@ const style = fs.readFileSync(`${__dirname}/../hosted/client.css`);
 // by our babel build/watch scripts in our package.json
 const jsBundle = fs.readFileSync(`${__dirname}/../hosted/DONT_EDIT_bundle.js`);
 
+// send back head request
+const respondMeta = (request, response, status, type) => {
+  // object for our headers
+  const headers = {
+    'Content-Type': type,
+  };
+
+  // send response without json object, just headers
+  response.writeHead(status, headers);
+  response.end();
+};
+
 // send back html page, only one for app
 const getIndex = (request, response) => {
-  response.writeHead(200, { 'Content-Type': 'text/html' });
-  response.write(index);
-  response.end();
+  // get the method type
+  const { method } = request;
+  if (method === 'GET') {
+    response.writeHead(200, { 'Content-Type': 'text/html' });
+    response.write(index);
+    response.end();
+  } else {
+    respondMeta(request, response, 200, 'text/html');
+  }
 };
 
 // send back css file
 const getStyle = (request, response) => {
-  response.writeHead(200, { 'Content-Type': 'text/css' });
-  response.write(style);
-  response.end();
+  // get the method type
+  const { method } = request;
+  if (method === 'GET') {
+    response.writeHead(200, { 'Content-Type': 'text/css' });
+    response.write(style);
+    response.end();
+  } else {
+    respondMeta(request, response, 200, 'text/css');
+  }
 };
 
 // added function to get our js file in our hosted folder.
@@ -25,9 +49,15 @@ const getStyle = (request, response) => {
 // This ES5 file is created from the code in our ES6 file (in the client folder)
 // adapted from class code
 const getBundle = (request, response) => {
-  response.writeHead(200, { 'Content-Type': 'application/javascript' });
-  response.write(jsBundle);
-  response.end();
+  // get the method type
+  const { method } = request;
+  if (method === 'GET') {
+    response.writeHead(200, { 'Content-Type': 'application/javascript' });
+    response.write(jsBundle);
+    response.end();
+  } else {
+    respondMeta(request, response, 200, 'application/javascript');
+  }
 };
 
 module.exports = {
